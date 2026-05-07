@@ -25,3 +25,9 @@ async def band(band_id: int) -> dict:
     if existing_band is None:
         raise HTTPException(status_code=404, detail="Band not found")
     return existing_band
+
+@app.get("/band/genre/{genre}")
+async def band_for_genre(genre: str) -> list[dict]:
+    return [
+        b for b in BANDS if b["genre"].lower() == genre.lower()
+    ]
