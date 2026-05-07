@@ -17,14 +17,14 @@ async def bands() -> list[Band]:
     ]
 
 @app.get("/bands/{band_id}", status_code=200)
-async def band(band_id: int) -> dict:
+async def band(band_id: int) -> Band:
 
     # for existing_band in BANDS:
     #     if existing_band["id"] == band_id:
     #         return existing_band
     # raise HTTPException(status_code=404, detail="Band not found")
 
-    existing_band = next((b for b in BANDS if b["id"] == band_id), None)
+    existing_band = next((Band(**b) for b in BANDS if b["id"] == band_id), None)
     if existing_band is None:
         raise HTTPException(status_code=404, detail="Band not found")
     return existing_band
