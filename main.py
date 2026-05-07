@@ -13,7 +13,7 @@ BANDS = [
 async def bands() -> list[dict]:
     return BANDS
 
-@app.get("/bands/{band_id}")
+@app.get("/bands/{band_id}", status_code=200)
 async def band(band_id: int) -> dict:
 
     # for existing_band in BANDS:
