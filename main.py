@@ -13,14 +13,26 @@ BANDS = [
 ]
 
 @app.get("/bands")
-async def bands(genre: GenreURLChoices | None = None) -> list[Band]:
+async def bands(
+        genre: GenreURLChoices | None = None,
+        has_album: bool | None = None
+) -> list[Band]:
+    band_list = [Band(**b) for b in BANDS]
+
     if genre:
-        return [
-            Band(**b) for b in BANDS if b["genre"].lower() == genre.value
+        band_list = [
+            b for b in band_list if b.genre.lower() == genre.value
         ]
-    return [
-        Band(**b) for b in BANDS
+    if has_album is True:
+        band_list = [
+            b for b in band_list if len(b.albums) > 0
     ]
+    elif has_album is False:
+        band_list = [
+            b for b in band_list if len(b.albums) == 0
+        ]
+    return band_list
+
 
 @app.get("/bands/{band_id}", status_code=200)
 async def band(band_id: int) -> Band:
