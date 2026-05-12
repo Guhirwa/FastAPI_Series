@@ -20,5 +20,5 @@ class BandBase(BaseModel):
 class BandCreate(BandBase):
     pass
 
-class BandWithId(BandCreate):
+class BandWithID(BandCreate):
     id: int
