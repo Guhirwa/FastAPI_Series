@@ -8,11 +8,17 @@ class GenreURLChoices(Enum):
     Metal = "metal"
     Hip_Hop = "hip-hop"
 
+class Album(BaseModel):
+    title: str
+    release_date: date
+
 class BandBase(BaseModel):
     name: str
     genre: str
     albums: list[Album] = []
 
-class Album(BaseModel):
-    title: str
-    release_date: date
+class BandCreate(BandBase):
+    pass
+
+class BandWithId(BandCreate):
+    id: int
