@@ -19,9 +19,8 @@ async def bands(genre: GenreURLChoices | None = None, has_album: bool | None = N
         band_list = [b for b in band_list if b.genre.lower() == genre.value]
     if has_album:
         band_list = [b for b in band_list if len(b.albums) > 0]
-    else:
+    elif has_album is False:
         band_list = [b for b in band_list if len(b.albums) == 0]
-
     return band_list
 
 @app.get("/bands/{band_id}", status_code=200)
@@ -48,4 +47,5 @@ async def create_band(band_data: BandCreate) -> BandWithID:
     new_id = BANDS[-1]["id"] + 1
     new_band = BandWithID(id = new_id, **band_data.model_dump()).model_dump()
     BANDS.append(new_band)
+    print(BANDS)
     return new_band
