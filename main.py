@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from schema import GenreURLChoices, Band
+from schema import GenreChoices, BandBase, BandCreate, BandWithID
 
 app = FastAPI()
 
@@ -13,32 +13,39 @@ BANDS = [
 ]
 
 @app.get("/bands")
-async def bands(genre: GenreURLChoices | None = None, has_album: bool | None = None) -> list[Band]:
-    band_list = [Band(**b) for b in BANDS]
+async def bands(genre: GenreChoices | None = None, has_album: bool | None = None) -> list[BandWithID]:
+    band_list = [BandWithID(**b) for b in BANDS]
     if genre:
         band_list = [b for b in band_list if b.genre.lower() == genre.value]
     if has_album:
         band_list = [b for b in band_list if len(b.albums) > 0]
-    else:
+    elif has_album is False:
         band_list = [b for b in band_list if len(b.albums) == 0]
-
     return band_list
 
 @app.get("/bands/{band_id}", status_code=200)
-async def band(band_id: int) -> Band:
+async def band(band_id: int) -> BandWithID:
 
     # for existing_band in BANDS:
     #     if existing_band["id"] == band_id:
     #         return Band(**existing_band)
     # raise HTTPException(status_code=404, detail="Band not found")
 
-    existing_band = next((Band(**b) for b in BANDS if b["id"] == band_id), None)
+    existing_band = next((BandWithID(**b) for b in BANDS if b["id"] == band_id), None)
     if existing_band is None:
         raise HTTPException(status_code=404, detail="Band not found")
     return existing_band
 
 @app.get("/band/genre/{genre}")
-async def band_for_genre(genre: GenreURLChoices) -> list[Band]:
+async def band_for_genre(genre: GenreChoices) -> list[BandWithID]:
     return [
-        Band(**b) for b in BANDS if b["genre"].lower() == genre.value
+        BandWithID(**b) for b in BANDS if b["genre"].lower() == genre.value
     ]
+
+@app.post("/bands", status_code=201)
+async def create_band(band_data: BandCreate) -> BandWithID:
+    new_id = BANDS[-1]["id"] + 1
+    new_band = BandWithID(id = new_id, **band_data.model_dump()).model_dump()
+    BANDS.append(new_band)
+    print(BANDS)
+    return new_band
