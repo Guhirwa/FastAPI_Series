@@ -43,7 +43,7 @@ async def band_for_genre(genre: GenreURLChoices) -> list[BandWithID]:
         BandWithID(**b) for b in BANDS if b["genre"].lower() == genre.value
     ]
 
-@app.post("/bands")
+@app.post("/bands", status_code=201)
 async def create_band(band_data: BandCreate) -> BandWithID:
     new_id = BANDS[-1]["id"] + 1
     new_band = BandWithID(id = new_id, **band_data.model_dump()).model_dump()
